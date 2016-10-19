@@ -15,11 +15,16 @@ class ViewController: UIViewController {
     // MARK: - Properties
     
     let debugSpace = "\n\n\n"
+    var isInSignupMode = true
     
     // MARK: - Outlets
     
     @IBOutlet var emailTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
+    
+    
+    @IBOutlet var sendCredentialsButton: UIButton!
+    
     @IBOutlet var loginButton: UIButton!
     @IBOutlet var messageLabel: UILabel!
     
@@ -27,6 +32,9 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // For debugging:
+        queryUserName()
         
     }
     
@@ -36,6 +44,28 @@ class ViewController: UIViewController {
     }
     
     @IBAction func loginTapped(_ sender: AnyObject) {
+        
+        if isInSignupMode {
+            
+            loginButton.setTitle("Sign Up", for: [])
+            
+            sendCredentialsButton.setTitle("Log In", for: [])
+            
+            messageLabel.text = "Want to create an account?"
+            
+            isInSignupMode = false
+            
+        } else {
+            
+            loginButton.setTitle("Log In", for: [])
+            
+            sendCredentialsButton.setTitle("Sign Up", for: [])
+            
+            messageLabel.text = "Already have an account?"
+            
+            isInSignupMode = true
+            
+        }
     }
     
     
