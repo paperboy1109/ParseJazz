@@ -16,12 +16,12 @@ class ViewController: UIViewController {
     
     let debugSpace = "\n\n\n"
     var isInSignupMode = true
+    var activityIndicatorView = UIActivityIndicatorView()
     
     // MARK: - Outlets
     
     @IBOutlet var emailTextField: UITextField!
     @IBOutlet var passwordTextField: UITextField!
-    
     
     @IBOutlet var sendCredentialsButton: UIButton!
     
@@ -41,6 +41,54 @@ class ViewController: UIViewController {
     // MARK: - Actions
     
     @IBAction func signupTapped(_ sender: AnyObject) {
+        
+        /* Parse will check the validity of the email */
+        if emailTextField.text == "" || passwordTextField.text == "" {
+            
+            showAlert(title: "Oops!", message: "Make sure to enter both an email and a password.")
+            
+        } else {
+            
+            showBusy()
+            
+            if isInSignupMode {
+                
+                let newUser = PFUser()
+                
+                newUser.username = emailTextField.text
+                newUser.email = emailTextField.text
+                newUser.password = passwordTextField.text
+                
+                newUser.signUpInBackground(block: { (success, error) in
+                    
+                    self.enableUI()
+                    
+                    if error != nil {
+                        
+                        let error = error as NSError?
+                        
+                        self.handleError(withMessage: "Signup unsuccessful.", error: error)
+                        
+                    }
+                })
+                
+            } else {
+                
+                PFUser.logInWithUsername(inBackground: emailTextField.text!, password: passwordTextField.text!, block: { (newUser, error) in
+                    
+                    self.enableUI()
+                    
+                    if error != nil {
+                        
+                        let error = error as NSError?
+                        
+                        self.handleError(withMessage: "Unable to login.  Please check your password and/or try again later.", error: error)
+
+                    }
+                })
+                
+            }
+        }
     }
     
     @IBAction func loginTapped(_ sender: AnyObject) {
@@ -70,6 +118,55 @@ class ViewController: UIViewController {
     
     
     // MARK: - Helpers
+    
+    func handleError(withMessage: String, error: NSError?) {
+        
+        if let errorMessageForUser = error?.userInfo["error"] as? String {
+            
+            self.showAlert(title: "Error", message: errorMessageForUser)
+            
+        } else {
+            
+            self.showAlert(title: "Error", message: withMessage)
+            
+        }
+        
+    }
+    
+    func showAlert(title: String, message: String) {
+        
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+            
+            self.dismiss(animated: true, completion: nil)
+        }))
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func showBusy() {
+        
+        activityIndicatorView = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 56, height: 56))
+        activityIndicatorView.center = self.view.center
+        activityIndicatorView.hidesWhenStopped = true
+        activityIndicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge
+        
+        view.addSubview(activityIndicatorView)
+        
+        activityIndicatorView.startAnimating()
+        
+        UIApplication.shared.beginIgnoringInteractionEvents()
+        
+    }
+    
+    func enableUI() {
+        
+        activityIndicatorView.stopAnimating()
+        
+        UIApplication.shared.endIgnoringInteractionEvents()
+        
+    }
     
     func updateUserName(withName: String) {
         
