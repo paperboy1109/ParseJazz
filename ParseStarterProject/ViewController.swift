@@ -43,6 +43,9 @@ class ViewController: UIViewController {
         if PFUser.current() != nil {
             performSegue(withIdentifier: "ToUserTable", sender: self)
         }
+        
+        /* Hide the navigation bar */
+        self.navigationController?.navigationBar.isHidden = true
     }
     
     // MARK: - Actions

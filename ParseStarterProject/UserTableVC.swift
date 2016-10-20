@@ -7,12 +7,15 @@
 //
 
 import UIKit
+import Parse
 
 class UserTableVC: UITableViewController {
     
     // MARK: - Properties 
     
     let cellIdentifier = "UserCell"
+    
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +25,12 @@ class UserTableVC: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        /* Show the navigation bar */
+        self.navigationController?.navigationBar.isHidden = false
     }
 
     override func didReceiveMemoryWarning() {
@@ -96,5 +105,16 @@ class UserTableVC: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
+    
+    // MARK: - Actions
+    
+    @IBAction func logoutTapped(_ sender: AnyObject) {
+        
+        PFUser.logOut()
+        
+        performSegue(withIdentifier: "ToRoot", sender: self)
+        
+    }
+    
 
 }
