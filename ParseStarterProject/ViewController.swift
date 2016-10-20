@@ -38,6 +38,13 @@ class ViewController: UIViewController {
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        
+        if PFUser.current() != nil {
+            performSegue(withIdentifier: "ToUserTable", sender: self)
+        }
+    }
+    
     // MARK: - Actions
     
     @IBAction func signupTapped(_ sender: AnyObject) {
@@ -69,6 +76,10 @@ class ViewController: UIViewController {
                         
                         self.handleError(withMessage: "Signup unsuccessful.", error: error)
                         
+                    } else {
+                        
+                        self.performSegue(withIdentifier: "ToUserTable", sender: self)
+                        
                     }
                 })
                 
@@ -84,6 +95,10 @@ class ViewController: UIViewController {
                         
                         self.handleError(withMessage: "Unable to login.  Please check your password and/or try again later.", error: error)
 
+                    } else {
+                        
+                        self.performSegue(withIdentifier: "ToUserTable", sender: self)
+                        
                     }
                 })
                 
