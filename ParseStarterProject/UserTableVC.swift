@@ -14,17 +14,46 @@ class UserTableVC: UITableViewController {
     // MARK: - Properties 
     
     let cellIdentifier = "UserCell"
+    var userNames = [""]
     
     // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let query = PFUser.query()
+        
+        /* Get all users */
+        query?.findObjectsInBackground(block: { (objects, error) in
+            
+            guard error == nil else {
+                print("\n\nFailed to get user names\n\n")
+                return
+            }
+            
+            if let allUsers = objects {
+                
+                
+                /* Remove the (blank) placeholder user name */
+                self.userNames.removeAll()
+                
+                for item in allUsers {
+                    
+                    /* Append all current users */
+                    if let user = item as? PFUser {
+                        
+                        self.userNames.append(user.username!)
+                        
+                    }
+                    
+                }
+                
+            }
+            
+            self.tableView.reloadData()
+            
+        })
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -47,7 +76,7 @@ class UserTableVC: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 4
+        return userNames.count
     }
 
     
@@ -55,7 +84,7 @@ class UserTableVC: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
         
-        cell.textLabel?.text = "Test"
+        cell.textLabel?.text = userNames[indexPath.row]
 
         return cell
     }
