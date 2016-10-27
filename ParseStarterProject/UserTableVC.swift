@@ -17,6 +17,7 @@ class UserTableVC: UITableViewController {
     var userNames = [""]
     var userIDs = [""]
     var isFollowing = ["" : false]
+    var refresher: UIRefreshControl!
     
     // MARK: - Lifecycle
     
@@ -27,67 +28,13 @@ class UserTableVC: UITableViewController {
             print("\n\n**The current user is: \(currentUser)** \n\n")
         }
         
-        let query = PFUser.query()
+        refresh()
         
-        /* Get all users */
-        query?.findObjectsInBackground(block: { (objects, error) in
-            
-            guard error == nil else {
-                print("\n\nFailed to get user names\n\n")
-                return
-            }
-            
-            if let allUsers = objects {
-                
-                
-                /* Remove the (blank) placeholder user name */
-                self.userNames.removeAll()
-                self.userIDs.removeAll()
-                self.isFollowing.removeAll()
-                
-                for item in allUsers {
-                    
-                    /* Append all current users */
-                    if let user = item as? PFUser {
-                        
-                        if user.objectId != PFUser.current()?.objectId {
-                            
-                            let usernameComponents = user.username!.components(separatedBy: "@")
-                            
-                            self.userNames.append(usernameComponents[0])
-                            self.userIDs.append(user.objectId!)
-                            
-                            let query = PFQuery(className: "Followers")
-                            query.whereKey("follower", equalTo: (PFUser.current()?.objectId)!)
-                            query.whereKey("following", equalTo: user.objectId!)
-                            
-                            query.findObjectsInBackground(block: { (objects, error) in
-                                
-                                if let objects = objects {
-                                    
-                                    if objects.count > 0 {
-                                        self.isFollowing[user.objectId!] = true
-                                    } else {
-                                        self.isFollowing[user.objectId!] = false
-                                    }
-                                    
-                                    if self.isFollowing.count == self.userNames.count {
-                                        self.tableView.reloadData()
-                                    }
-                                    
-                                }
-                            })
-                            
-                        }
-                    }
-                    
-                }
-                
-                //self.tableView.reloadData()
-                
-            }
-            
-        })
+        refresher = UIRefreshControl()
+        refresher.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refresher.addTarget(self, action: #selector(UserTableVC.refresh), for: UIControlEvents.valueChanged)
+        
+        tableView.addSubview(refresher)
         
     }
     
@@ -237,6 +184,76 @@ class UserTableVC: UITableViewController {
         
         performSegue(withIdentifier: "ToRoot", sender: self)
         
+    }
+    
+    // MARK: - Helpers
+    
+    func refresh() {
+        
+        let query = PFUser.query()
+        
+        /* Get all users */
+        query?.findObjectsInBackground(block: { (objects, error) in
+            
+            guard error == nil else {
+                print("\n\nFailed to get user names\n\n")
+                return
+            }
+            
+            if let allUsers = objects {
+                
+                
+                /* Remove the (blank) placeholder user name */
+                self.userNames.removeAll()
+                self.userIDs.removeAll()
+                self.isFollowing.removeAll()
+                
+                for item in allUsers {
+                    
+                    /* Append all current users */
+                    if let user = item as? PFUser {
+                        
+                        if user.objectId != PFUser.current()?.objectId {
+                            
+                            let usernameComponents = user.username!.components(separatedBy: "@")
+                            
+                            self.userNames.append(usernameComponents[0])
+                            self.userIDs.append(user.objectId!)
+                            
+                            let query = PFQuery(className: "Followers")
+                            query.whereKey("follower", equalTo: (PFUser.current()?.objectId)!)
+                            query.whereKey("following", equalTo: user.objectId!)
+                            
+                            query.findObjectsInBackground(block: { (objects, error) in
+                                
+                                if let objects = objects {
+                                    
+                                    if objects.count > 0 {
+                                        self.isFollowing[user.objectId!] = true
+                                    } else {
+                                        self.isFollowing[user.objectId!] = false
+                                    }
+                                    
+                                    if self.isFollowing.count == self.userNames.count {
+                                        
+                                        self.tableView.reloadData()
+                                        
+                                        self.refresher.endRefreshing()
+                                    }
+                                    
+                                }
+                            })
+                            
+                        }
+                    }
+                    
+                }
+                
+                //self.tableView.reloadData()
+                
+            }
+            
+        })
     }
     
     
