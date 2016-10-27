@@ -144,16 +144,23 @@ class UserTableVC: UITableViewController {
             
             let query = PFQuery(className: "Followers")
             
-            query.whereKey("follower", equalTo: (PFUser.current()?.objectId!)!)
+            query.whereKey("follower", equalTo: (PFUser.current()!.objectId!)) //(PFUser.current()?.objectId!)!)
             query.whereKey("following", equalTo: userIDs[indexPath.row])
             
             query.findObjectsInBackground(block: { (objects, error) in
+                
+                print("Here are the query objects: (Followers class")
+                print(objects)
                 
                 if let objects = objects {
                     
                     for item in objects {
                         
+                        print("\nNow Deleting: ")
+                        print(item)
+                        
                         item.deleteInBackground()
+                        
                     }
                 }
             })
