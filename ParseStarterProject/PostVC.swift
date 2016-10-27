@@ -7,8 +7,13 @@
 //
 
 import UIKit
+import Parse
 
 class PostVC: UIViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+    
+    // MARK: - Properties
+    
+    var activityIndicatorView = UIActivityIndicatorView()
     
     // MARK: - Outlets
     
@@ -52,6 +57,43 @@ class PostVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCon
     
     // MARK: - Helpers
     
+    func showAlert(title: String, message: String) {
+        
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+            
+            alertController.dismiss(animated: true, completion: nil)
+        }))
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func showBusy() {
+        
+        activityIndicatorView = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 56, height: 56))
+        activityIndicatorView.center = self.view.center
+        activityIndicatorView.hidesWhenStopped = true
+        activityIndicatorView.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.whiteLarge
+        
+        view.addSubview(activityIndicatorView)
+        
+        activityIndicatorView.startAnimating()
+        
+        UIApplication.shared.beginIgnoringInteractionEvents()
+        
+    }
+    
+    func enableUI() {
+        
+        activityIndicatorView.stopAnimating()
+        
+        UIApplication.shared.endIgnoringInteractionEvents()
+        
+    }
+    
+    // MARK: - Actions
+    
     @IBAction func chooseImageTapped(_ sender: AnyObject) {
         
         let imagePicker = UIImagePickerController()
@@ -65,6 +107,36 @@ class PostVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCon
     }
     
     @IBAction func postTapped(_ sender: AnyObject) {
+        
+        showBusy()
+        
+        let post = PFObject(className: "Posts")
+        post["message"] = textField.text
+        post["userID"] = PFUser.current()?.objectId!
+        
+        let imageData = UIImagePNGRepresentation(imageToPost.image!)
+        let imageFile = PFFile(name: "image.png", data: imageData!)
+        
+        post["imageFile"] = imageFile
+        post.saveInBackground { (success, error) in
+            
+            self.enableUI()
+            
+            if error != nil {
+                self.showAlert(title: "Failed to post your image", message: "Please try again later")
+            } else {
+                
+                self.showAlert(title: "Image posted", message: "Your image has been posted successfully")
+                
+                self.textField.text = ""
+                
+                self.imageToPost.image = UIImage(named: "background_character")
+            }
+            
+            
+        }
+        
+        
     }
 
 }
