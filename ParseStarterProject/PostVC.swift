@@ -114,8 +114,12 @@ class PostVC: UIViewController, UINavigationControllerDelegate, UIImagePickerCon
         post["message"] = textField.text
         post["userID"] = PFUser.current()?.objectId!
         
-        let imageData = UIImagePNGRepresentation(imageToPost.image!)
-        let imageFile = PFFile(name: "image.png", data: imageData!)
+        // let imageData = UIImagePNGRepresentation(imageToPost.image!)
+        // let imageFile = PFFile(name: "image.png", data: imageData!)
+        
+        // Large images will crash the app!
+        let imageData = UIImageJPEGRepresentation(imageToPost.image!, 0.2)
+        let imageFile = PFFile(name: "image.jpg", data: imageData!)
         
         post["imageFile"] = imageFile
         post.saveInBackground { (success, error) in

@@ -5,6 +5,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -107,6 +108,59 @@
             </objects>
             <point key="canvasLocation" x="-358" y="139"/>
         </scene>
+        <!--Your Feed-->
+        <scene sceneID="wyr-P9-JpJ">
+            <objects>
+                <tableViewController title="Your Feed" id="1tx-A2-LY9" customClass="FeedTableVC" customModule="ParseStarterProject_Swift" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="269" sectionHeaderHeight="28" sectionFooterHeight="28" id="yPu-6q-Sth">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="FeedCell" rowHeight="269" id="HSG-om-FsV" customClass="FeedTableViewCell" customModule="ParseStarterProject_Swift" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="92" width="375" height="269"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="HSG-om-FsV" id="Zl8-db-ECH">
+                                    <frame key="frameInset" width="375" height="268"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4J7-pf-Dei">
+                                            <frame key="frameInset" minX="67" minY="22" width="240" height="141"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        </imageView>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TaO-mo-Ni3">
+                                            <frame key="frameInset" minX="8" minY="183" width="359" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Rr-N8-L4X">
+                                            <frame key="frameInset" minX="8" minY="212" width="359" height="21"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="messageLabel" destination="8Rr-N8-L4X" id="A2R-bE-q3L"/>
+                                    <outlet property="postedImageView" destination="4J7-pf-Dei" id="Cmc-pR-lW3"/>
+                                    <outlet property="userNameLabel" destination="TaO-mo-Ni3" id="2pE-zP-v8P"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="1tx-A2-LY9" id="P9z-Qp-vIL"/>
+                            <outlet property="delegate" destination="1tx-A2-LY9" id="l6X-go-IpP"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mfT-8T-bKb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2864.8000000000002" y="-430.43478260869568"/>
+        </scene>
         <!--Users-->
         <scene sceneID="bGd-1V-TkB">
             <objects>
@@ -132,11 +186,18 @@
                     </tableView>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Users" id="Tgo-om-x95" userLabel="Users">
-                        <barButtonItem key="leftBarButtonItem" title="Post" id="7K5-oL-0aD">
-                            <connections>
-                                <segue destination="AMf-ox-kUl" kind="show" id="j6h-Mu-7GN"/>
-                            </connections>
-                        </barButtonItem>
+                        <leftBarButtonItems>
+                            <barButtonItem title="Post" id="7K5-oL-0aD">
+                                <connections>
+                                    <segue destination="AMf-ox-kUl" kind="show" id="j6h-Mu-7GN"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem title="Feed" id="yMS-Pg-jso">
+                                <connections>
+                                    <segue destination="1tx-A2-LY9" kind="show" id="XQ6-VD-sJh"/>
+                                </connections>
+                            </barButtonItem>
+                        </leftBarButtonItems>
                         <barButtonItem key="rightBarButtonItem" title="Logout" id="qNh-cG-OwL">
                             <connections>
                                 <action selector="logoutTapped:" destination="edx-e0-nr2" id="u3Z-fb-g4a"/>
@@ -221,7 +282,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sjb-rU-wdZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2872.8000000000002" y="138.98050974512745"/>
+            <point key="canvasLocation" x="2866" y="250"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="ma8-dP-RUi">
